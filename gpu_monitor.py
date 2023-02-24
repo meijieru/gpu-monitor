@@ -172,8 +172,27 @@ def get_gpu_infos(nvidiasmi_output):
     return gpu_infos
 
 
-def print_free_gpus(server, gpu_infos):
-    free_gpus = [info for info in gpu_infos if len(info['pids']) == 0]
+def print_free_gpus(server, gpu_infos, run_ps):
+    pids = [pid for gpu_info in gpu_infos for pid in gpu_info['pids']]
+    if len(pids) > 0:
+        ps = run_ps(pids=pids)
+        if ps is None:
+            error('Could not reach {} or error running ps'.format(server))
+            return
+
+        users_by_pid = get_users_by_pid(ps)
+    else:
+        users_by_pid = {}
+
+    def filter_out_system_pid(gpu_info):
+        return [
+            pid for pid in gpu_info['pids']
+            if users_by_pid.get(pid, None) not in ['root', 'sddm', 'gdm']
+        ]
+
+    free_gpus = [
+        info for info in gpu_infos if len(filter_out_system_pid(info)) == 0
+    ]
 
     if len(free_gpus) == 0:
         info('Server {}: No free GPUs :('.format(server))
@@ -286,7 +305,7 @@ def main(argv):
                             filter_by_user=args.user,
                             translate_to_real_names=args.finger)
         else:
-            print_free_gpus(server, gpu_infos)
+            print_free_gpus(server, gpu_infos, run_ps)
 
 
 if __name__ == '__main__':
