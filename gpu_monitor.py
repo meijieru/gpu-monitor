@@ -197,7 +197,7 @@ def print_free_gpus(server, gpu_infos, run_ps):
     if len(free_gpus) == 0:
         info('Server {}: No free GPUs :('.format(server))
     else:
-        info('Server {}:'.format(server))
+        info('Server {}: {}'.format(server, len(free_gpus)))
         for gpu_info in free_gpus:
             info('\tGPU {}, {}'.format(gpu_info['idx'], gpu_info['model']))
 
