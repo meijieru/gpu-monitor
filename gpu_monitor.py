@@ -16,15 +16,15 @@ from functools import partial
 from logging import debug, info, error
 
 # Default timeout in seconds after which SSH stops trying to connect
-DEFAULT_SSH_TIMEOUT = 3
+DEFAULT_SSH_TIMEOUT = 10
 
 # Default timeout in seconds after which remote commands are interrupted
-DEFAULT_CMD_TIMEOUT = 10
+DEFAULT_CMD_TIMEOUT = 30
 
 # Default server file
-DEFAULT_SERVER_FILE = 'servers.txt'
-SERVER_FILE_PATH = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])),
-                                DEFAULT_SERVER_FILE)
+DEFAULT_SERVER_FILE = 'vila.txt'
+SERVER_FILE_PATH = os.path.join(os.path.realpath(os.path.dirname(__file__)),
+                                'servers', DEFAULT_SERVER_FILE)
 
 parser = argparse.ArgumentParser(description='Check state of GPU servers')
 parser.add_argument('-v', '--verbose', action='store_true',
